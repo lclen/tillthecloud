@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'WenQuanYi Micro Hei', system-ui, -apple-system, sans-serif;
+    color: #2c2c2c;
+    background: #f7f5ef;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.8;
+  }
+}
+
+@layer components {
+  .photo-frame {
+    @apply bg-white p-2 shadow-sm;
+  }
+  .section-divider {
+    @apply w-10 h-[1px] bg-current opacity-30;
+  }
+  .page-mist {
+    background:
+      linear-gradient(180deg, rgba(247, 245, 239, 0.96) 0%, rgba(232, 237, 243, 0.96) 100%);
+  }
+  .page-paper {
+    background:
+      linear-gradient(180deg, rgba(232, 237, 243, 0.62) 0%, rgba(249, 248, 244, 0.98) 18%, rgba(249, 248, 244, 0.98) 82%, rgba(232, 237, 243, 0.62) 100%);
+  }
+  .page-warm {
+    background:
+      linear-gradient(180deg, rgba(232, 237, 243, 0.68) 0%, rgba(242, 235, 224, 0.96) 100%);
+  }
+  .page-dark-bridge {
+    background:
+      linear-gradient(180deg, #e8edf3 0%, #cfd5dd 20%, #302f2f 44%, #302f2f 100%);
+  }
+}
