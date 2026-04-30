@@ -1,4 +1,7 @@
+import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import { Reveal, StaggerReveal } from './motion/Reveal';
+import { imageReveal, motionTokens } from '../lib/motion';
 
 function Copy({ children, className = '' }) {
   return (
@@ -52,7 +55,13 @@ export default function DarkSection({
           {isGroupEvent ? (
             <div className="grid gap-10 px-8 py-8 md:px-10 md:py-10 lg:grid-cols-[1.18fr_0.92fr] lg:gap-8 lg:px-8 lg:py-8">
               <div className="relative min-h-[560px] lg:min-h-[620px]">
-                <figure className="h-[360px] overflow-hidden lg:h-[420px]">
+                <motion.figure
+                  className="h-[360px] overflow-hidden lg:h-[420px]"
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.24 }}
+                  variants={imageReveal}
+                >
                   <img
                     src={images[0]}
                     alt={`${chinese} 主图`}
@@ -60,28 +69,28 @@ export default function DarkSection({
                     loading="lazy"
                     decoding="async"
                   />
-                </figure>
+                </motion.figure>
 
-                <div className="relative z-10 mt-3 bg-[rgba(34,31,31,0.94)] px-6 py-6 md:px-7 lg:w-[88%] lg:px-8 lg:py-7">
+                <Reveal className="relative z-10 mt-3 bg-[rgba(34,31,31,0.94)] px-6 py-6 md:px-7 lg:w-[88%] lg:px-8 lg:py-7" variant="soft">
                   <h2 className="flex flex-wrap items-end gap-x-3 gap-y-2 text-[20px] font-light tracking-[0.18em] text-white md:text-[22px] lg:text-[26px]">
                     <span>{chinese}</span>
                     <span className="text-[18px] uppercase tracking-[0.28em] md:text-[20px] lg:text-[22px]">
                       {english}
                     </span>
                   </h2>
-                </div>
+                </Reveal>
 
-                <div className="relative z-10 mt-4 border-[3px] border-white/85 bg-[rgba(47,43,43,0.76)] px-5 py-5 backdrop-blur-[2px] md:px-6 lg:ml-5 lg:w-[80%] lg:px-7 lg:py-7">
+                <Reveal className="relative z-10 mt-4 border-[3px] border-white/85 bg-[rgba(47,43,43,0.76)] px-5 py-5 backdrop-blur-[2px] md:px-6 lg:ml-5 lg:w-[80%] lg:px-7 lg:py-7" variant="soft" delay={0.08}>
                   <Copy className="text-[13px] leading-[2.15] text-white/84">
                     {Array.isArray(description) ? description[0] : description}
                   </Copy>
-                </div>
+                </Reveal>
               </div>
 
               <div className="flex min-h-[560px] flex-col justify-between">
-                <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <StaggerReveal className="grid grid-cols-2 gap-3 md:gap-4" staggerChildren={motionTokens.stagger.tight}>
                   {images.slice(1, 5).map((img, idx) => (
-                    <figure key={img} className="overflow-hidden bg-white/5">
+                    <motion.figure key={img} variants={imageReveal} className="overflow-hidden bg-white/5 motion-card-glow">
                       <img
                         src={img}
                         alt={`${chinese} ${idx + 2}`}
@@ -89,11 +98,11 @@ export default function DarkSection({
                         loading="lazy"
                         decoding="async"
                       />
-                    </figure>
+                    </motion.figure>
                   ))}
-                </div>
+                </StaggerReveal>
 
-                <div className="mt-8 bg-[rgba(47,43,43,0.94)] px-0 py-0">
+                <Reveal className="mt-8 bg-[rgba(47,43,43,0.94)] px-0 py-0" variant="soft" delay={0.12}>
                   <div className="grid gap-6 border-t border-white/12 pt-6 md:grid-cols-3 md:gap-5 lg:pt-7">
                     {(detailColumns?.length ? detailColumns : Array.isArray(description) ? description : [description]).map((text, idx) => (
                       <Copy
@@ -104,13 +113,13 @@ export default function DarkSection({
                       </Copy>
                     ))}
                   </div>
-                </div>
+                </Reveal>
               </div>
             </div>
           ) : isNeighborhoodSection ? (
             <div className="grid gap-10 px-8 py-8 md:px-10 md:py-10 lg:grid-cols-[1.14fr_0.92fr] lg:gap-8 lg:px-8 lg:py-8">
               <div className="relative min-h-[560px] lg:min-h-[620px]">
-                <figure className="h-[360px] overflow-hidden lg:h-[420px]">
+                <motion.figure className="h-[360px] overflow-hidden lg:h-[420px]" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.24 }} variants={imageReveal}>
                   <img
                     src={images[0]}
                     alt={`${chinese} 主图`}
@@ -118,28 +127,28 @@ export default function DarkSection({
                     loading="lazy"
                     decoding="async"
                   />
-                </figure>
+                </motion.figure>
 
-                <div className="relative z-10 mt-3 bg-[rgba(34,31,31,0.94)] px-6 py-6 md:px-7 lg:w-[98%] lg:px-8 lg:py-7">
+                <Reveal className="relative z-10 mt-3 bg-[rgba(34,31,31,0.94)] px-6 py-6 md:px-7 lg:w-[98%] lg:px-8 lg:py-7" variant="soft">
                   <h2 className="flex flex-wrap items-end gap-x-3 gap-y-2 text-[20px] font-light tracking-[0.18em] text-white md:text-[22px] lg:text-[26px]">
                     <span>{chinese}</span>
                     <span className="text-[16px] uppercase tracking-[0.18em] text-white/92 md:text-[18px] lg:text-[20px]">
                       {english}
                     </span>
                   </h2>
-                </div>
+                </Reveal>
 
-                <div className="relative z-10 mt-4 border-[3px] border-white/85 bg-[rgba(47,43,43,0.78)] px-5 py-5 backdrop-blur-[2px] md:px-6 lg:ml-1 lg:w-[92%] lg:px-7 lg:py-7">
+                <Reveal className="relative z-10 mt-4 border-[3px] border-white/85 bg-[rgba(47,43,43,0.78)] px-5 py-5 backdrop-blur-[2px] md:px-6 lg:ml-1 lg:w-[92%] lg:px-7 lg:py-7" variant="soft" delay={0.08}>
                   <Copy className="text-[13px] leading-[2.15] text-white/84">
                     {Array.isArray(description) ? description[0] : description}
                   </Copy>
-                </div>
+                </Reveal>
               </div>
 
               <div className="flex min-h-[560px] flex-col justify-between">
-                <div className="grid grid-cols-2 gap-3 md:gap-4">
+                <StaggerReveal className="grid grid-cols-2 gap-3 md:gap-4" staggerChildren={motionTokens.stagger.tight}>
                   {images.slice(1, 5).map((img, idx) => (
-                    <figure key={img} className="overflow-hidden bg-white/5">
+                    <motion.figure key={img} variants={imageReveal} className="overflow-hidden bg-white/5 motion-card-glow">
                       <img
                         src={img}
                         alt={`${chinese} ${idx + 2}`}
@@ -147,11 +156,11 @@ export default function DarkSection({
                         loading="lazy"
                         decoding="async"
                       />
-                    </figure>
+                    </motion.figure>
                   ))}
-                </div>
+                </StaggerReveal>
 
-                <div className="mt-8 bg-[rgba(47,43,43,0.94)]">
+                <Reveal className="mt-8 bg-[rgba(47,43,43,0.94)]" variant="soft" delay={0.12}>
                   <div className="grid gap-6 border-t border-white/12 pt-6 md:grid-cols-3 md:gap-5 lg:pt-7">
                     {(detailColumns?.length ? detailColumns : Array.isArray(description) ? description : [description]).map((text, idx) => (
                       <Copy
@@ -162,7 +171,7 @@ export default function DarkSection({
                       </Copy>
                     ))}
                   </div>
-                </div>
+                </Reveal>
               </div>
             </div>
           ) : (

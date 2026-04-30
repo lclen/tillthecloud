@@ -16,7 +16,7 @@ const scenes = [
     caption: 'Lakefront night view of Till the Cloud',
     images: [
       '/images/optimized/向云端1.4跨页手册_页面_03_图像_0001.webp',
-      '/images/optimized/向云端1.4跨页手册_页面_03_图像_0002.webp',
+      '/images/cloud-direction-transparent.png',
     ],
     layout: 'spread',
     bg: 'white',

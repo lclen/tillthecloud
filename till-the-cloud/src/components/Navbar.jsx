@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { motionTokens } from '../lib/motion';
 
 const navItems = [
   { id: 'hero', label: '首页' },
@@ -57,31 +59,36 @@ export default function Navbar() {
   };
 
   return (
-    <nav
+    <motion.nav
+      initial={{ y: -24, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: motionTokens.durations.slow, ease: motionTokens.ease }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled ? 'bg-white/90 backdrop-blur-md shadow-sm' : 'bg-transparent'
       }`}
     >
       <div className="max-w-[1200px] mx-auto px-8 py-5 flex items-center justify-between">
-        <button
+        <motion.button
           onClick={() => scrollTo('hero')}
           className={`text-left transition-colors ${
             scrolled ? 'text-[#2c2c2c]' : 'text-white'
           }`}
+          whileHover={{ opacity: 0.82, y: -1 }}
+          whileTap={{ scale: 0.985 }}
         >
           <span className="text-lg font-light tracking-[0.15em]">向云端</span>
           <span className={`block text-[9px] tracking-[0.35em] uppercase mt-0.5 ${scrolled ? 'text-[#999]' : 'text-white/70'}`}>
             Till The Cloud
           </span>
-        </button>
+        </motion.button>
 
         {/* Desktop Nav */}
         <div className="hidden lg:flex items-center gap-8">
           {navItems.map((item) => (
-            <button
+            <motion.button
               key={item.id}
               onClick={() => scrollTo(item.id)}
-              className={`text-xs tracking-wider transition-colors hover:opacity-60 ${
+              className={`relative text-xs tracking-wider transition-colors hover:opacity-60 ${
                 activeSection === item.id
                   ? scrolled
                     ? 'text-[#2c2c2c] font-medium'
@@ -90,16 +97,26 @@ export default function Navbar() {
                   ? 'text-[#999]'
                   : 'text-white/70'
               }`}
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.98 }}
             >
               {item.label}
-            </button>
+              {activeSection === item.id && (
+                <motion.span
+                  layoutId="nav-active-line"
+                  className={`absolute -bottom-2 left-1/2 h-[2px] w-6 -translate-x-1/2 rounded-full ${scrolled ? 'bg-[#2c2c2c]' : 'bg-white/90'}`}
+                  transition={{ type: 'spring', stiffness: 420, damping: 34 }}
+                />
+              )}
+            </motion.button>
           ))}
         </div>
 
         {/* Mobile Menu Button */}
-        <button
+        <motion.button
           onClick={() => setIsOpen(!isOpen)}
           className={`lg:hidden p-2 ${scrolled ? 'text-[#2c2c2c]' : 'text-white'}`}
+          whileTap={{ scale: 0.94 }}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             {isOpen ? (
@@ -108,15 +125,31 @@ export default function Navbar() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
             )}
           </svg>
-        </button>
+        </motion.button>
       </div>
 
       {/* Mobile Nav */}
+      <AnimatePresence initial={false}>
       {isOpen && (
-        <div className="lg:hidden bg-white/95 backdrop-blur-md border-t border-[#eee]">
-          <div className="px-8 py-6 grid grid-cols-2 gap-2">
+        <motion.div
+          className="lg:hidden bg-white/95 backdrop-blur-md border-t border-[#eee]"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: motionTokens.durations.base, ease: motionTokens.ease }}
+        >
+          <motion.div
+            className="px-8 py-6 grid grid-cols-2 gap-2"
+            initial="hidden"
+            animate="visible"
+            exit="hidden"
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.04, delayChildren: 0.04 } },
+            }}
+          >
             {navItems.map((item) => (
-              <button
+              <motion.button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
                 className={`text-left text-xs py-2.5 px-3 rounded transition-colors tracking-wider ${
@@ -124,13 +157,19 @@ export default function Navbar() {
                     ? 'bg-[#f5f5f5] text-[#2c2c2c] font-medium'
                     : 'text-[#999] hover:bg-[#f5f5f5]'
                 }`}
+                variants={{
+                  hidden: { opacity: 0, y: 8 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+                whileTap={{ scale: 0.98 }}
               >
                 {item.label}
-              </button>
+              </motion.button>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
-    </nav>
+      </AnimatePresence>
+    </motion.nav>
   );
 }

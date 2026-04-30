@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    --motion-fast: 220ms;
+    --motion-base: 420ms;
+    --motion-slow: 760ms;
+    --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  }
   html {
     scroll-behavior: smooth;
   }
@@ -14,6 +20,18 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     line-height: 1.8;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -39,5 +57,53 @@
   .page-dark-bridge {
     background:
       linear-gradient(180deg, #e8edf3 0%, #cfd5dd 20%, #302f2f 44%, #302f2f 100%);
+  }
+  .motion-hover-lift {
+    transition:
+      transform var(--motion-base) var(--motion-ease),
+      box-shadow var(--motion-base) var(--motion-ease),
+      opacity var(--motion-fast) var(--motion-ease);
+  }
+  .motion-hover-lift:hover {
+    transform: translate3d(0, -6px, 0);
+  }
+  .motion-card-glow {
+    transition:
+      transform var(--motion-base) var(--motion-ease),
+      box-shadow var(--motion-base) var(--motion-ease),
+      filter var(--motion-base) var(--motion-ease);
+  }
+  .motion-card-glow:hover {
+    transform: translate3d(0, -8px, 0) scale(1.012);
+    box-shadow: 0 24px 50px rgba(69, 78, 94, 0.18);
+    filter: saturate(1.02);
+  }
+  .hero-breathe {
+    animation: hero-breathe 2.8s ease-in-out infinite;
+  }
+  .soft-float {
+    animation: soft-float 5.4s ease-in-out infinite;
+  }
+}
+
+@keyframes hero-breathe {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.42;
+  }
+  50% {
+    transform: translate3d(0, 6px, 0);
+    opacity: 0.7;
+  }
+}
+
+@keyframes soft-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
   }
 }

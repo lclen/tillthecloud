@@ -1,11 +1,14 @@
+import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
+import { StaggerReveal } from './motion/Reveal';
+import { fadeSoft, imageReveal, motionTokens } from '../lib/motion';
 
 function FeatureCopy({ item, align = 'left', compact = false, rail = false, className = '' }) {
   const alignClass = align === 'right' ? 'text-right items-end' : 'text-left items-start';
   const railWrapClass = align === 'right' ? 'flex-row-reverse justify-start gap-5' : 'flex-row justify-between gap-5';
 
   return (
-    <div className={`flex flex-col ${alignClass} ${className}`}>
+    <motion.div className={`flex flex-col ${alignClass} ${className}`} variants={fadeSoft}>
       {rail ? (
         <div className={`flex w-full items-start ${railWrapClass}`}>
           <div className={`flex flex-col ${alignClass}`}>
@@ -24,7 +27,7 @@ function FeatureCopy({ item, align = 'left', compact = false, rail = false, clas
       <p className={`${rail ? 'mt-5' : 'mt-4'} ${compact ? 'max-w-none' : 'max-w-[210px]'} text-[13px] leading-[1.9] tracking-[0.08em] text-[#68707c]`}>
         {item.description}
       </p>
-    </div>
+    </motion.div>
   );
 }
 
@@ -77,46 +80,46 @@ export default function FeatureGridSection({ id, chinese, english, items, backgr
                     <p className="text-2xl font-light tracking-[0.12em] text-[#3f4145]">{chinese}</p>
                     <p className="mt-4 text-sm uppercase tracking-[0.22em] text-[#8190b1]">{english}</p>
                   </div>
-                  <div className="grid gap-6">
+                  <StaggerReveal className="grid gap-6" staggerChildren={motionTokens.stagger.tight}>
                     {items.map((item) => (
-                      <div key={item.title} className="bg-white/88 p-3 shadow-[0_12px_26px_rgba(54,65,82,0.12)]">
-                        <figure className="border-[5px] border-white shadow-md">
+                      <motion.div key={item.title} variants={fadeSoft} className="bg-white/88 p-3 shadow-[0_12px_26px_rgba(54,65,82,0.12)]">
+                        <figure className="border-[5px] border-white shadow-md motion-card-glow">
                           <img src={item.image} alt={item.title} className="h-48 w-full object-cover sm:h-56" loading="lazy" decoding="async" />
                         </figure>
                         <div className="px-2 py-5">
                           <FeatureCopy item={item} compact />
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
-                  </div>
+                  </StaggerReveal>
                 </div>
 
                 <div className="relative hidden min-h-[760px] lg:grid lg:grid-cols-[0.78fr_1.56fr_0.78fr] lg:gap-6 lg:px-8 lg:py-12">
-                  <div className="flex flex-col justify-between bg-[#f8f6f1]/92 px-8 py-10 backdrop-blur-[1px]">
+                  <StaggerReveal className="flex flex-col justify-between bg-[#f8f6f1]/92 px-8 py-10 backdrop-blur-[1px]">
                     {titleBlock}
                     <FeatureCopy item={items[0]} rail />
                     <FeatureCopy item={items[1]} rail />
-                  </div>
+                  </StaggerReveal>
 
-                  <div className="relative">
-                    <figure className="absolute left-2 top-16 w-[45%] border-[5px] border-white shadow-[0_12px_28px_rgba(54,65,82,0.18)]">
+                  <StaggerReveal className="relative" staggerChildren={motionTokens.stagger.tight}>
+                    <motion.figure variants={imageReveal} className="absolute left-2 top-16 w-[45%] border-[5px] border-white shadow-[0_12px_28px_rgba(54,65,82,0.18)] motion-card-glow">
                       <img src={items[0].image} alt={items[0].title} className="h-56 w-full object-cover" loading="lazy" decoding="async" />
-                    </figure>
-                    <figure className="absolute right-3 top-16 w-[45%] border-[5px] border-white shadow-[0_12px_28px_rgba(54,65,82,0.18)]">
+                    </motion.figure>
+                    <motion.figure variants={imageReveal} className="absolute right-3 top-16 w-[45%] border-[5px] border-white shadow-[0_12px_28px_rgba(54,65,82,0.18)] motion-card-glow">
                       <img src={items[2].image} alt={items[2].title} className="h-56 w-full object-cover" loading="lazy" decoding="async" />
-                    </figure>
-                    <figure className="absolute left-2 bottom-14 w-[45%] border-[5px] border-white shadow-[0_12px_28px_rgba(54,65,82,0.18)]">
+                    </motion.figure>
+                    <motion.figure variants={imageReveal} className="absolute left-2 bottom-14 w-[45%] border-[5px] border-white shadow-[0_12px_28px_rgba(54,65,82,0.18)] motion-card-glow">
                       <img src={items[1].image} alt={items[1].title} className="h-56 w-full object-cover" loading="lazy" decoding="async" />
-                    </figure>
-                    <figure className="absolute right-3 bottom-12 w-[45%] border-[5px] border-white shadow-[0_12px_28px_rgba(54,65,82,0.18)]">
+                    </motion.figure>
+                    <motion.figure variants={imageReveal} className="absolute right-3 bottom-12 w-[45%] border-[5px] border-white shadow-[0_12px_28px_rgba(54,65,82,0.18)] motion-card-glow">
                       <img src={items[3].image} alt={items[3].title} className="h-56 w-full object-cover" loading="lazy" decoding="async" />
-                    </figure>
-                  </div>
+                    </motion.figure>
+                  </StaggerReveal>
 
-                  <div className="flex flex-col justify-between bg-[#f8f6f1]/92 px-8 py-10 backdrop-blur-[1px]">
+                  <StaggerReveal className="flex flex-col justify-between bg-[#f8f6f1]/92 px-8 py-10 backdrop-blur-[1px]">
                     <FeatureCopy item={items[2]} align="right" rail />
                     <FeatureCopy item={items[3]} align="right" rail />
-                  </div>
+                  </StaggerReveal>
                 </div>
               </>
             ) : (
@@ -131,22 +134,22 @@ export default function FeatureGridSection({ id, chinese, english, items, backgr
                     <p className="text-2xl font-light tracking-[0.12em] text-[#3f4145]">{chinese}</p>
                     <p className="mt-4 text-sm uppercase tracking-[0.22em] text-[#8190b1]">{english}</p>
                   </div>
-                  <div className="grid gap-6">
+                  <StaggerReveal className="grid gap-6" staggerChildren={motionTokens.stagger.tight}>
                     {items.map((item) => (
-                      <div key={item.title} className="bg-white/90 p-3 shadow-[0_12px_26px_rgba(54,65,82,0.12)]">
-                        <figure className="border-[5px] border-white shadow-md">
+                      <motion.div key={item.title} variants={fadeSoft} className="bg-white/90 p-3 shadow-[0_12px_26px_rgba(54,65,82,0.12)]">
+                        <figure className="border-[5px] border-white shadow-md motion-card-glow">
                           <img src={item.image} alt={item.title} className="h-48 w-full object-cover sm:h-56" loading="lazy" decoding="async" />
                         </figure>
                         <div className="px-2 py-5">
                           <FeatureCopy item={item} compact />
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
-                  </div>
+                  </StaggerReveal>
                 </div>
 
                 <div className="relative hidden min-h-[820px] lg:grid lg:grid-cols-[0.82fr_1.64fr_0.82fr] lg:gap-8 lg:px-8 lg:py-12">
-                  <div className="grid grid-rows-[auto_272px_272px] gap-8 bg-[#f8f6f1]/94 px-8 py-10 backdrop-blur-[1px]">
+                  <StaggerReveal className="grid grid-rows-[auto_272px_272px] gap-8 bg-[#f8f6f1]/94 px-8 py-10 backdrop-blur-[1px]">
                     <div className="self-start">{titleBlock}</div>
                     <div className="flex items-center">
                       <FeatureCopy item={items[0]} rail className="w-full justify-center" />
@@ -154,28 +157,28 @@ export default function FeatureGridSection({ id, chinese, english, items, backgr
                     <div className="flex items-center">
                       <FeatureCopy item={items[2]} rail className="w-full justify-center" />
                     </div>
-                  </div>
+                  </StaggerReveal>
 
-                  <div className="grid grid-rows-[272px_272px] gap-8 pt-[118px]">
+                  <StaggerReveal className="grid grid-rows-[272px_272px] gap-8 pt-[118px]" staggerChildren={motionTokens.stagger.tight}>
                     <div className="grid grid-cols-2 gap-8">
-                      <figure className="h-full border-[5px] border-white shadow-[0_16px_34px_rgba(54,65,82,0.20)]">
+                      <motion.figure variants={imageReveal} className="h-full border-[5px] border-white shadow-[0_16px_34px_rgba(54,65,82,0.20)] motion-card-glow">
                         <img src={items[0].image} alt={items[0].title} className="h-full w-full object-cover" loading="lazy" decoding="async" />
-                      </figure>
-                      <figure className="h-full border-[5px] border-white shadow-[0_16px_34px_rgba(54,65,82,0.20)]">
+                      </motion.figure>
+                      <motion.figure variants={imageReveal} className="h-full border-[5px] border-white shadow-[0_16px_34px_rgba(54,65,82,0.20)] motion-card-glow">
                         <img src={items[1].image} alt={items[1].title} className="h-full w-full object-cover" loading="lazy" decoding="async" />
-                      </figure>
+                      </motion.figure>
                     </div>
                     <div className="grid grid-cols-2 gap-8">
-                      <figure className="h-full border-[5px] border-white shadow-[0_16px_34px_rgba(54,65,82,0.20)]">
+                      <motion.figure variants={imageReveal} className="h-full border-[5px] border-white shadow-[0_16px_34px_rgba(54,65,82,0.20)] motion-card-glow">
                         <img src={items[2].image} alt={items[2].title} className="h-full w-full object-cover" loading="lazy" decoding="async" />
-                      </figure>
-                      <figure className="h-full border-[5px] border-white shadow-[0_16px_34px_rgba(54,65,82,0.20)]">
+                      </motion.figure>
+                      <motion.figure variants={imageReveal} className="h-full border-[5px] border-white shadow-[0_16px_34px_rgba(54,65,82,0.20)] motion-card-glow">
                         <img src={items[3].image} alt={items[3].title} className="h-full w-full object-cover" loading="lazy" decoding="async" />
-                      </figure>
+                      </motion.figure>
                     </div>
-                  </div>
+                  </StaggerReveal>
 
-                  <div className="grid grid-rows-[118px_272px_272px] gap-8 bg-[#f8f6f1]/94 px-8 py-10 backdrop-blur-[1px]">
+                  <StaggerReveal className="grid grid-rows-[118px_272px_272px] gap-8 bg-[#f8f6f1]/94 px-8 py-10 backdrop-blur-[1px]">
                     <div />
                     <div className="flex items-center justify-end">
                       <FeatureCopy item={items[1]} align="right" rail className="w-full justify-center" />
@@ -183,7 +186,7 @@ export default function FeatureGridSection({ id, chinese, english, items, backgr
                     <div className="flex items-center justify-end">
                       <FeatureCopy item={items[3]} align="right" rail className="w-full justify-center" />
                     </div>
-                  </div>
+                  </StaggerReveal>
                 </div>
               </>
             )}
@@ -204,17 +207,17 @@ export default function FeatureGridSection({ id, chinese, english, items, backgr
             <h2 className="mb-4 text-2xl font-light tracking-wider text-[#2c2c2c] md:text-3xl">{chinese}</h2>
             <div className="mx-auto h-[1px] w-10 bg-[#2c2c2c]/20" />
           </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <StaggerReveal className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4" staggerChildren={motionTokens.stagger.tight}>
             {items.map((item) => (
-              <div key={item.title} className="group">
+              <motion.div key={item.title} className="group" variants={fadeSoft}>
                 <div className="mb-4 overflow-hidden bg-white p-2 shadow-sm">
-                  <img src={item.image} alt={item.title} className="h-52 w-full object-cover transition-transform duration-700 group-hover:scale-105 md:h-60" loading="lazy" decoding="async" />
+                  <img src={item.image} alt={item.title} className="motion-card-glow h-52 w-full object-cover transition-transform duration-700 group-hover:scale-105 md:h-60" loading="lazy" decoding="async" />
                 </div>
                 <h3 className="mb-1 text-sm font-normal tracking-wider text-[#2c2c2c]">{item.title}</h3>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[#999]">{item.subtitle}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </StaggerReveal>
         </div>
       </div>
     </section>

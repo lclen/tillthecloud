@@ -1,34 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-
-function FadeIn({ children, className = '' }) {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.14 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 ${
-        visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-      } ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
+import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { Reveal, StaggerReveal } from './motion/Reveal';
+import ParallaxImage from './motion/ParallaxImage';
+import { fadeSoft, imageReveal, motionTokens } from '../lib/motion';
 
 function TitleBlock({ chinese, english, align = 'left', light = false }) {
   const alignClass = align === 'center' ? 'text-center items-center' : 'text-left items-start';
@@ -66,6 +40,7 @@ export default function SceneSection({
   bg = 'white',
 }) {
   const bgClass = bg === 'light' ? 'page-mist' : 'page-paper';
+  const sectionRef = useRef(null);
 
   const textBlock = (
     <div className="px-8 py-12 md:px-14 md:py-16">
@@ -77,26 +52,32 @@ export default function SceneSection({
   );
 
   return (
-    <section id={id} className={`scroll-mt-24 py-0 ${bgClass}`}>
+    <section id={id} className={`scroll-mt-24 py-0 ${bgClass}`} ref={sectionRef}>
       <div className="mx-auto max-w-[1200px]">
-        <FadeIn>
+        <Reveal>
           {layout === 'spread' && (
             <div className="relative min-h-[680px] overflow-hidden bg-gradient-to-b from-[#f9f8f4] via-white to-[#e8edf3] md:min-h-[760px]">
               <div className="absolute bottom-10 left-0 top-12 w-[56%] bg-[#d3d9e1]" />
               <div className="relative grid gap-10 px-4 py-12 md:px-0 md:py-16 lg:grid-cols-[1.42fr_0.88fr] lg:gap-12">
                 <div className="relative pt-12 md:pt-20">
-                  <figure className="relative z-10 bg-white shadow-[0_18px_45px_rgba(54,65,82,0.18)] md:-ml-10 lg:-ml-16">
-                    <img src={images[0]} alt={chinese} className="block w-full aspect-[3373/2159] object-cover" loading="lazy" decoding="async" />
-                  </figure>
-                  {caption && <p className="relative z-10 mt-8 text-xs text-[#6f747d]">{caption}</p>}
+                  <motion.figure
+                    className="relative z-10 bg-white shadow-[0_18px_45px_rgba(54,65,82,0.18)] md:-ml-10 lg:-ml-16"
+                    initial="hidden"
+                    whileInView="visible"
+                    viewport={{ once: true, amount: 0.24 }}
+                    variants={imageReveal}
+                  >
+                    <ParallaxImage src={images[0]} alt={chinese} className="block w-full aspect-[3373/2159] object-cover" containerRef={sectionRef} loading="lazy" decoding="async" />
+                  </motion.figure>
+                  {caption && <Reveal className="relative z-10 mt-8 text-xs text-[#6f747d]" variant="soft">{caption}</Reveal>}
                 </div>
-                <div className="relative z-20 flex flex-col items-center lg:items-start lg:pl-8 xl:pl-12">
-                  {images[1] && <img src={images[1]} alt="向云端标志" className="mb-8 w-56 max-w-full md:w-64 lg:w-72" loading="lazy" decoding="async" />}
-                  <div className="w-full max-w-[360px] border-2 border-[#c4cad4] bg-white/90 px-7 py-6 text-center text-[15px] leading-[2.45] text-[#656a73] shadow-[0_12px_30px_rgba(75,86,105,0.06)]">
+                <StaggerReveal className="relative z-20 flex flex-col items-center lg:items-start lg:pl-8 xl:pl-12" staggerChildren={motionTokens.stagger.base}>
+                  {images[1] && <motion.img src={images[1]} alt="向云端标志" className="mb-8 w-56 max-w-full md:w-64 lg:w-72 soft-float" loading="lazy" decoding="async" variants={fadeSoft} />}
+                  <motion.div variants={fadeSoft} className="w-full max-w-[360px] border-2 border-[#c4cad4] bg-white/90 px-7 py-6 text-center text-[15px] leading-[2.45] text-[#656a73] shadow-[0_12px_30px_rgba(75,86,105,0.06)]">
                     {description}
-                  </div>
-                  {englishDescription && <p className="mt-7 max-w-[345px] text-xs leading-[1.95] text-[#7d8eaa]">{englishDescription}</p>}
-                </div>
+                  </motion.div>
+                  {englishDescription && <motion.p variants={fadeSoft} className="mt-7 max-w-[345px] text-xs leading-[1.95] text-[#7d8eaa]">{englishDescription}</motion.p>}
+                </StaggerReveal>
               </div>
             </div>
           )}
@@ -105,26 +86,26 @@ export default function SceneSection({
             <div className="relative min-h-[760px] overflow-hidden bg-gradient-to-b from-[#e8edf3] via-[#d3d9e1] to-[#f9f8f4]">
               <img src={images[0]} alt="" className="absolute inset-y-0 right-0 hidden h-full w-[62%] object-cover opacity-32 md:block" loading="lazy" decoding="async" />
               <div className="relative grid gap-8 px-8 py-16 md:grid-cols-[0.82fr_1.55fr] md:px-10 md:py-20">
-                <div className="flex flex-col justify-center">
+                <StaggerReveal className="flex flex-col justify-center" staggerChildren={motionTokens.stagger.tight}>
                   <TitleBlock chinese={chinese} english={english} align="center" />
-                  <div className="mx-auto mt-8 max-w-[270px] border-2 border-white/80 px-7 py-6 text-center">
+                  <motion.div variants={fadeSoft} className="mx-auto mt-8 max-w-[270px] border-2 border-white/80 px-7 py-6 text-center">
                     <Paragraphs>{description}</Paragraphs>
-                  </div>
-                  <p className="mx-auto mt-12 max-w-[270px] text-center text-xs leading-[1.9] text-[#8190b1]">
+                  </motion.div>
+                  <motion.p variants={fadeSoft} className="mx-auto mt-12 max-w-[270px] text-center text-xs leading-[1.9] text-[#8190b1]">
                     Cloudshore Pavilion brings a Mediterranean coastal mood to the lakeside, combining white walls,
                     blue domes and flexible event rooms into a clear waterfront landmark.
-                  </p>
-                </div>
-                <div className="grid content-center gap-6 md:grid-cols-2">
+                  </motion.p>
+                </StaggerReveal>
+                <StaggerReveal className="grid content-center gap-6 md:grid-cols-2" staggerChildren={motionTokens.stagger.tight}>
                   {images.slice(1, 3).map((img, idx) => (
-                    <figure key={img} className="border-[5px] border-white shadow-[0_16px_30px_rgba(54,65,82,0.18)]">
+                    <motion.figure key={img} variants={imageReveal} className="border-[5px] border-white shadow-[0_16px_30px_rgba(54,65,82,0.18)] motion-card-glow">
                       <img src={img} alt={`${chinese} ${idx + 1}`} className="h-48 w-full object-cover md:h-56" loading="lazy" decoding="async" />
-                    </figure>
+                    </motion.figure>
                   ))}
-                  <figure className="border-[5px] border-white shadow-[0_16px_30px_rgba(54,65,82,0.18)] md:col-span-2">
+                  <motion.figure variants={imageReveal} className="border-[5px] border-white shadow-[0_16px_30px_rgba(54,65,82,0.18)] md:col-span-2 motion-card-glow">
                     <img src={images[3] || images[0]} alt={`${chinese} 室内`} className="h-72 w-full object-cover md:h-[430px]" loading="lazy" decoding="async" />
-                  </figure>
-                </div>
+                  </motion.figure>
+                </StaggerReveal>
               </div>
             </div>
           )}
@@ -134,7 +115,7 @@ export default function SceneSection({
               <div className="absolute inset-y-0 left-0 w-[14%] bg-[#d5dbe4]/85" />
               <div className="absolute inset-y-0 right-0 w-[10%] bg-[#d5dbe4]/85" />
               <div className="relative grid gap-8 md:grid-cols-2">
-                <div className="space-y-10">
+                <StaggerReveal className="space-y-10" staggerChildren={motionTokens.stagger.tight}>
                   <div className="mx-auto max-w-[480px] text-center">
                     <TitleBlock
                       chinese={(
@@ -148,26 +129,26 @@ export default function SceneSection({
                     />
                     <Paragraphs className="mt-8">{description}</Paragraphs>
                   </div>
-                  <figure className="border-2 border-[#aeb5c0] shadow-sm">
+                  <motion.figure variants={imageReveal} className="border-2 border-[#aeb5c0] shadow-sm motion-card-glow">
                     <img src={images[0]} alt={chinese} className="h-72 w-full object-cover md:h-[350px]" loading="lazy" decoding="async" />
-                  </figure>
-                </div>
-                <div className="grid content-center gap-6">
-                  <figure className="border-2 border-[#aeb5c0]">
+                  </motion.figure>
+                </StaggerReveal>
+                <StaggerReveal className="grid content-center gap-6" staggerChildren={motionTokens.stagger.tight}>
+                  <motion.figure variants={imageReveal} className="border-2 border-[#aeb5c0] motion-card-glow">
                     <img src={images[1]} alt={`${chinese} 台阶`} className="h-56 w-full object-cover md:h-64" loading="lazy" decoding="async" />
-                  </figure>
+                  </motion.figure>
                   <div className="grid gap-6 md:grid-cols-2">
-                    <div className="border-2 border-[#aeb5c0] bg-white px-8 py-8 text-center text-[15px] leading-[2.2] tracking-[0.14em] text-[#68707c]">
+                    <motion.div variants={fadeSoft} className="border-2 border-[#aeb5c0] bg-white px-8 py-8 text-center text-[15px] leading-[2.2] tracking-[0.14em] text-[#68707c]">
                       白色拱廊与镜面水池相映成景，一步一景，随手出片。
-                    </div>
-                    <figure className="border-2 border-[#aeb5c0]">
+                    </motion.div>
+                    <motion.figure variants={imageReveal} className="border-2 border-[#aeb5c0] motion-card-glow">
                       <img src={images[2]} alt={`${chinese} 人像`} className="h-48 w-full object-cover" loading="lazy" decoding="async" />
-                    </figure>
+                    </motion.figure>
                   </div>
-                  <figure className="border-2 border-[#aeb5c0]">
+                  <motion.figure variants={imageReveal} className="border-2 border-[#aeb5c0] motion-card-glow">
                     <img src={images[3]} alt={`${chinese} 光影`} className="h-44 w-full object-cover" loading="lazy" decoding="async" />
-                  </figure>
-                </div>
+                  </motion.figure>
+                </StaggerReveal>
               </div>
             </div>
           )}
@@ -183,7 +164,7 @@ export default function SceneSection({
               />
               <div className="absolute inset-0 bg-gradient-to-b from-[#eef2f5]/82 via-[#eef2f5]/18 to-[#dfe6ec]/18" />
               <div className="relative mx-auto max-w-[1060px] px-6 py-14 md:px-12 md:py-20">
-                <div className="bg-[#f3f5f6] px-7 py-10 shadow-[0_18px_44px_rgba(69,78,94,0.08)] md:px-16 md:py-12">
+                <Reveal className="bg-[#f3f5f6] px-7 py-10 shadow-[0_18px_44px_rgba(69,78,94,0.08)] md:px-16 md:py-12">
                   <div className="grid gap-9 md:grid-cols-[0.92fr_1fr] md:gap-20">
                     <div className="flex flex-col items-center text-center">
                       <TitleBlock chinese={chinese} english={english} align="center" />
@@ -206,11 +187,11 @@ export default function SceneSection({
                       </p>
                     </div>
                   </div>
-                </div>
-                <div className="bg-[#efe7d9] px-8 py-10 shadow-[0_22px_45px_rgba(69,78,94,0.10)] md:px-20 md:py-12">
+                </Reveal>
+                <StaggerReveal className="bg-[#efe7d9] px-8 py-10 shadow-[0_22px_45px_rgba(69,78,94,0.10)] md:px-20 md:py-12" staggerChildren={motionTokens.stagger.tight}>
                   <div className="grid gap-8 md:grid-cols-3 md:gap-14">
                     {[images[3], images[1], images[2]].filter(Boolean).map((img, idx) => (
-                      <figure key={img} className="border-[5px] border-white bg-white shadow-sm">
+                      <motion.figure key={img} variants={imageReveal} className="border-[5px] border-white bg-white shadow-sm motion-card-glow">
                         <img
                           src={img}
                           alt={`${chinese} ${idx + 1}`}
@@ -218,10 +199,10 @@ export default function SceneSection({
                           loading="lazy"
                           decoding="async"
                         />
-                      </figure>
+                      </motion.figure>
                     ))}
                   </div>
-                </div>
+                </StaggerReveal>
               </div>
             </div>
           )}
@@ -291,15 +272,15 @@ export default function SceneSection({
                 {textBlock}
               </div>
               <div className={`${layout === 'left' || layout === 'multi-left' ? 'md:order-1' : ''} grid gap-5 bg-white p-8 md:grid-cols-2 md:p-12`}>
-                {images.map((img, idx) => (
-                  <figure key={img} className={`${idx === 0 ? 'md:col-span-2' : ''} border-[5px] border-white shadow-md`}>
+                  {images.map((img, idx) => (
+                  <motion.figure key={img} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={imageReveal} className={`${idx === 0 ? 'md:col-span-2' : ''} border-[5px] border-white shadow-md motion-card-glow`}>
                     <img src={img} alt={`${chinese} ${idx + 1}`} className={`${idx === 0 ? 'h-72 md:h-80' : 'h-52'} w-full object-cover`} loading="lazy" decoding="async" />
-                  </figure>
+                  </motion.figure>
                 ))}
               </div>
             </div>
           )}
-        </FadeIn>
+        </Reveal>
       </div>
     </section>
   );
